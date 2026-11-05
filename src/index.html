@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Prototype de landing page à personnaliser dans l'atelier Codex." />
+  <title>[NOM DU PROJET] — Prototype étudiant</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <header class="site-header">
+    <div class="container header-row">
+      <a class="brand" href="#accueil" aria-label="Retour à l'accueil">✦ <span>[NOM DU PROJET]</span></a>
+      <nav aria-label="Navigation principale"><a href="#benefices">Bénéfices</a><a href="#fonctionnement">Fonctionnement</a><a href="#contact">Tester l'idée</a></nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section id="accueil" class="hero container" aria-labelledby="hero-title">
+      <p class="eyebrow">PROTOTYPE ÉTUDIANT · À PERSONNALISER</p>
+      <h1 id="hero-title">[Une promesse claire pour votre public cible]</h1>
+      <p class="lead">[Expliquez en deux phrases le problème résolu, pour qui, et ce qui rend votre solution utile. Évitez les slogans vagues.]</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#fonctionnement">Découvrir le concept <span aria-hidden="true">↗</span></a>
+        <a class="button button-secondary" href="#contact">Tester mon idée</a>
+      </div>
+      <p class="hint">Ceci est un prototype pédagogique. Aucun compte ni paiement nécessaire.</p>
+      <div class="abstract-card" aria-hidden="true">
+        <div class="abstract-label">VOTRE PREMIER MVP</div>
+        <div class="abstract-graphic"><span>01</span><span>02</span><span>03</span></div>
+        <div class="abstract-bottom">Idée → Produit → Utilisateurs</div>
+      </div>
+    </section>
+
+    <section id="benefices" class="section section-muted" aria-labelledby="benefices-title">
+      <div class="container">
+        <p class="eyebrow">POURQUOI CE PROJET ?</p>
+        <h2 id="benefices-title">Trois bénéfices à adapter</h2>
+        <div class="card-grid">
+          <article class="card"><span class="card-number">01</span><h3>[Bénéfice 1]</h3><p>[Quel problème concret cela résout-il pour votre utilisateur ?]</p></article>
+          <article class="card"><span class="card-number">02</span><h3>[Bénéfice 2]</h3><p>[Quelle valeur supplémentaire obtenue ?]</p></article>
+          <article class="card"><span class="card-number">03</span><h3>[Bénéfice 3]</h3><p>[Pourquoi votre solution est-elle simple à utiliser ?]</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="fonctionnement" class="section container" aria-labelledby="fonctionnement-title">
+      <p class="eyebrow">COMMENT ÇA MARCHE ?</p>
+      <h2 id="fonctionnement-title">Un fonctionnement facile à comprendre</h2>
+      <ol class="steps">
+        <li><strong>Découvrir</strong><span>[Comment l'utilisateur découvre-t-il l'offre ?]</span></li>
+        <li><strong>Essayer</strong><span>[Quelle est l'action centrale de votre MVP ?]</span></li>
+        <li><strong>Obtenir un résultat</strong><span>[Quel bénéfice peut-il constater ?]</span></li>
+      </ol>
+    </section>
+
+    <section id="contact" class="section section-dark" aria-labelledby="contact-title">
+      <div class="container contact-layout">
+        <div><p class="eyebrow">PROCHAINE ÉTAPE</p><h2 id="contact-title">Et si on testait cette idée ?</h2><p>Utilisez ce bouton de démonstration pour vérifier une interaction JavaScript. Il ne collecte aucune information personnelle.</p></div>
+        <div class="contact-box"><button type="button" id="demo-button" class="button button-light">Simuler un intérêt</button><p id="demo-message" class="feedback" role="status" aria-live="polite">Aucune donnée n'est enregistrée ou envoyée.</p></div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="container footer-row"><span>© <span id="year">2026</span> [NOM DU PROJET]</span><span>Prototype d'atelier · à personnaliser</span></div></footer>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
+
+# Dépendances et builds éventuels
+node_modules/
+dist/
+build/
+.next/
+
+# Secrets et variables locales — ne jamais commiter
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Journaux
+*.log
