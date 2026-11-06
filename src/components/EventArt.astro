@@ -1,0 +1,12 @@
+---
+interface Props { theme: string; art: string; large?: boolean; }
+const { theme, art, large = false } = Astro.props;
+---
+<div class:list={['event-art', theme, { large }]} aria-hidden="true">
+  <div class="art-top"><span>mtech<span class="art-paris"> paris</span></span><span>LES RENCONTRES</span></div>
+  {art === 'build' && <><div class="code-mark"><span>〈</span><i>✳</i><span>〉</span></div><div class="art-caption">MAKE SOMETHING<br /><strong>THAT MATTERS.</strong></div></>}
+  {art === 'spark' && <><div class="spark-mark">✳</div><div class="art-caption">MOINS DE CLICS.<br /><strong>PLUS D’IDÉES.</strong></div></>}
+  {art === 'orbit' && <><div class="orbit-mark"><i></i><i></i><i></i><span>↗</span></div><div class="art-caption">SEARCH IS CHANGING.<br /><strong>LET’S TALK.</strong></div></>}
+  {art === 'blocks' && <><div class="blocks-mark"><i></i><i></i><i></i><i></i></div><div class="art-caption">BUILD IT.<br /><strong>SHARE IT.</strong></div></>}
+  <div class="art-grid"></div>
+</div>

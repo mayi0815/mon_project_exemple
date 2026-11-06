@@ -1,0 +1,17 @@
+---
+import EventArt from './EventArt.astro';
+import Icon from './Icon.astro';
+import { eventDay, eventMonth, eventTime } from '../lib/dates';
+import type { Event } from '../server/store.mjs';
+interface Props { event: Event; past?: boolean; }
+const { event, past = false } = Astro.props;
+---
+<article class="event-card">
+  <a href={`/evenements/${event.id}`} class="card-art-link" tabindex="-1" aria-hidden="true"><EventArt theme={event.theme} art={event.art} /><span class="art-date"><b>{eventDay(event.startsAt)}</b><span>{eventMonth(event.startsAt)}</span></span></a>
+  <div class="card-body"><div class="card-category"><span>{event.category}</span><span class="small-label">{event.format}</span></div>
+    <h3><a href={`/evenements/${event.id}`}>{event.title}</a></h3>
+    <p class="card-meta"><Icon name="clock" size={15} /> {eventTime(event.startsAt)} — {eventTime(event.endsAt)} <span>·</span> <span>Heure de Paris</span></p>
+    <p class="card-meta"><Icon name="pin" size={15} /> {event.location}</p>
+    <div class="card-bottom"><span class:list={['free-label', { ended: past }]}><span></span>{past ? 'Terminé' : 'Entrée gratuite'}</span><a href={`/evenements/${event.id}`} class="card-cta" aria-label={`Découvrir : ${event.title}`}>Découvrir <Icon name="arrow" size={17} /></a></div>
+  </div>
+</article>

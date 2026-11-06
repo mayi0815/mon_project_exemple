@@ -49,6 +49,8 @@ Pour être plus visible sur Google
 
 « Agis comme un expert SEO. Audite la structure HTML, les titres, les métadonnées, le contenu, les liens internes et l'accessibilité de mon site. Identifie les principaux problèmes de référencement naturel et propose un plan d'amélioration priorisé. »
 
+GEO generative engine optimisation
+ (display in the responses in ai generative tools/conversations/recommendations).
 
 8. Transformer un projet en véritable produit
 

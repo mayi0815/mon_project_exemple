@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EventArt from '../../components/EventArt.astro';
+import Icon from '../../components/Icon.astro';
+import { store, RegistrationError } from '../../server/store.mjs';
+import { eventDate, eventTime } from '../../lib/dates';
+import { readForm } from '../../server/form.mjs';
+import FormFeedback from '../../components/FormFeedback.astro';
+
+const event = (await store.events()).find(item => item.id === Astro.params.id);
+if (!event) return Astro.rewrite('/404');
+let error = '';
+let success = false;
+let alias = '';
+let email = '';
+if (Astro.request.method === 'POST') {
+  try {
+    const form = await readForm(Astro.request, Astro.url);
+    alias = (form.get('alias') || '').slice(0, 100);
+    email = (form.get('email') || '').slice(0, 150);
+    await store.register(event.id, alias, email, form.get('demo'));
+    success = true;
+  } catch (caught) {
+    if (caught instanceof RegistrationError) { error = caught.message; Astro.response.status = caught.status; }
+    else { error = 'L’inscription n’a pas pu être enregistrée. Réessayez dans un instant.'; Astro.response.status = 503; console.error('Échec du stockage local des inscriptions.'); }
+  }
+}
+const past = Date.parse(event.startsAt) <= Date.now();
+const count = (await store.registrations()).filter(row => row.eventId === event.id).length;
+const full = count >= event.capacity;
+---
+<BaseLayout title={`${event.title} — Mtech Paris`} description={event.subtitle}><div class="container detail-page"><a href="/#agenda" class="back-link">← Tous les événements</a><div class="detail-grid"><div class="detail-main"><EventArt theme={event.theme} art={event.art} large /><div class="detail-labels"><span class="pill purple">{event.category}</span><span>{event.format}</span></div><h1>{event.title}</h1><p class="intro-text">{event.subtitle}</p><a class="button primary mobile-form-link" href="#inscription">Aller à l’inscription ↓</a><section class="detail-section"><h2>Au programme</h2><p>{event.description}</p><ol class="schedule">{event.agenda.map(item => <li>{item}</li>)}</ol></section><section class="detail-section"><h2>À glisser dans votre sac</h2><p>{event.bring}</p></section><p class="programme-note">Événement fictif · Date et lieu à confirmer · Horaires Europe/Paris</p></div><aside class="registration-panel" aria-labelledby="registration-title"><div class="organizer"><span class="organizer-icon">m.</span><div><small>UNE RENCONTRE ORGANISÉE PAR</small><strong>Mtech Paris</strong></div></div><div class="detail-info"><div><Icon name="calendar" size={21} /><span><strong>{eventDate(event.startsAt)}</strong><span>{eventTime(event.startsAt)} — {eventTime(event.endsAt)} · Paris</span></span></div><div><Icon name="pin" size={21} /><span><strong>{event.location}</strong><span>Adresse à confirmer avant publication</span></span></div><div><Icon name="people" size={21} /><span><strong>{event.capacity} places de démonstration</strong><span>{Math.max(0, event.capacity - count)} disponibles dans ce prototype</span></span></div></div>
+    {success ? <div id="inscription" class="registration-success" role="status"><span class="success-icon"><Icon name="check" size={26} /></span><h2 id="registration-title">C’est enregistré !</h2><p>Votre inscription de démonstration a bien été sauvegardée.</p><p>Aucune place réelle n’est réservée et aucun e-mail n’est envoyé.</p><a class="button primary" href="/#agenda">Explorer les événements <Icon name="arrow" /></a></div> : <><div id="inscription" class="registration-heading"><h2 id="registration-title">{past ? 'Ce rendez-vous est terminé.' : full ? 'Toutes les places sont prises.' : 'On se retrouve ?'}</h2><span class="free-label"><span></span> Entrée gratuite</span></div>{past || full ? <p class="closed-message">{past ? 'Découvrez les prochaines rencontres de la communauté.' : 'Vous pouvez découvrir les autres événements à venir.'}<br /><a href="/#agenda">Voir les événements ↗</a></p> : <><p class="form-note">Mode démonstration : utilisez un pseudo fictif et une adresse en <strong>@example.test</strong>.</p>{error && <p class="form-error" role="alert" id="form-error" tabindex="-1" data-form-error>{error}</p>}<form method="post" class="registration-form" data-registration-form data-submit-form aria-describedby={error ? 'form-error' : undefined}><label for="alias">Pseudo fictif</label><input id="alias" name="alias" autocomplete="off" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_-]{3,30}" placeholder="curieux_01" value={alias} /><label for="email">E-mail de démonstration</label><input id="email" name="email" type="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="done" autocomplete="off" required maxlength="77" pattern="[a-zA-Z0-9][a-zA-Z0-9._+\-]*@example\.test" placeholder="curieux@example.test" value={email} aria-describedby="event-email-help" /><p id="event-email-help" class="field-help">Exemple : curieux@example.test. Les adresses réelles ne sont pas acceptées ici.</p><label class="checkbox-label"><input type="checkbox" name="demo" required /><span>J’utilise uniquement des données fictives pour tester l’inscription.</span></label><button class="button primary" type="submit"><span data-button-label>Tester mon inscription</span><Icon name="arrow" /></button><p class="submit-note">Sans compte. Sans paiement. Sans e-mail envoyé.</p></form></> }</>}
+    <div class="panel-footer"><span aria-hidden="true">✳</span> Un premier pas vers de nouvelles idées.</div></aside></div></div>
+<FormFeedback />
+</BaseLayout>

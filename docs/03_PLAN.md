@@ -1,53 +1,40 @@
-# 03 — PLAN DE RÉALISATION
+# 03 — Plan de réalisation : Mtech Paris V1
 
-Ce fichier décrit **l'ordre des opérations**. Adaptez ce plan après la lecture de votre PRD ; n'effacez pas tout sans raison.
+## Architecture retenue le 6 novembre 2026
 
-## Objectif de la séance
+La demande explicite d’Astro et de deux fichiers JSON autorise le passage du starter HTML à Astro avec un petit serveur Node. Les fichiers du starter et les documents personnels de l’étudiant sont conservés.
 
-Construire [UN MVP SIMPLE] et vérifier [UN COMPORTEMENT OBSERVABLE].
+- **Routes à la demande :** `/`, `/evenements/[id]`, `/a-propos`, `/404`. Catalogue et fiches relisent le JSON pour permettre des modifications sans build.
+- **Données publiques :** événements lus côté serveur et présentés en HTML ; le fichier brut n’est pas exposé.
+- **Données privées :** inscriptions fictives dans `data/registrations.json` et abonnements newsletter dans `data/newsletter.json`, hors de `public/` et de Git. Deux fichiers séparés évitent de confondre participation et consentement newsletter.
+- **Mutation :** POST HTML sur la fiche, validation serveur et contrôle d’origine actif.
+- **Navigateur :** aucun framework hydraté ; filtre et formulaire utilisables sans JavaScript. Petit script facultatif pour le bouton d’envoi et le focus d’erreur.
+- **Limite :** disque persistant et exécution locale ; pas de disque éphémère ni de déploiement en grappe.
 
-## Étape 1 — Cadrage (5–10 min)
+## Étapes et fichiers
 
-- [ ] Remplir `01_IDEE.md`.
-- [ ] Remplir les sections essentielles de `02_PRD.md`.
-- [ ] Définir un seul critère de succès prioritaire : [CRITÈRE].
-- **Livrable :** un besoin clairement formulé.
+1. **Préparer Astro :** `package.json`, verrou npm, `astro.config.mjs`, `tsconfig.json`, `.nvmrc`, `.gitignore`.
+2. **Créer les données et le stockage :** `data/*.json`, `src/server/store.mjs`, `src/lib/dates.ts`. Vérifier persistance et concurrence dans des dossiers temporaires.
+3. **Créer l’interface :** `src/layouts/`, `src/components/`, `src/pages/`, `src/styles/global.css`, `public/favicon.svg`. Catalogue, fiche, formulaire, à propos et 404.
+4. **Vérifier le runtime réel :** `src/middleware.ts`, `tests/`. Analyse de types, tests de stockage, build et tests HTTP sur le serveur Node compilé.
+5. **Documenter :** README, PRD, présent plan, checklist et `05_WORKLOG.md`. Préserver `04_PROMPTS.md` et les changements existants de l’étudiant.
 
-## Étape 2 — Planification avec Codex (5 min)
+## Suite recommandée
 
-- [ ] Envoyer le Prompt 1 de `04_PROMPTS.md`, après personnalisation.
-- [ ] Examiner la proposition de Codex, réduire le périmètre si besoin.
-- [ ] Noter les fichiers à modifier : [FICHIERS].
-- **Livrable :** plan approuvé, sans développement prématuré.
+Ouvrir le site à 375 px et sur ordinateur, tester le parcours au clavier, puis valider les informations d’un premier véritable événement. Avant toute collecte réelle, décider des règles de confidentialité et de conservation ; avant tout hébergement, vérifier persistance du disque et sauvegardes.
 
-## Étape 3 — Premier prototype (10–20 min)
+## Extension du 6 novembre 2026 — newsletter et mobile
 
-- [ ] Envoyer le Prompt 2 de `04_PROMPTS.md`, après personnalisation.
-- [ ] Vérifier les modifications de `src/`.
-- [ ] Ouvrir `src/index.html` dans le navigateur.
-- **Livrable :** une version que l'on peut montrer.
+Demande et réponses de l’étudiant : préparer la collecte de vraies adresses newsletter, responsable `Mtech`, contact `contact@mtecparis.com`, conservation `12` mois. Aucun changement de serveur ou de base de données.
 
-## Étape 4 — Test et amélioration (5–10 min)
+1. Ajouter `/newsletter`, `/confidentialite` et les liens de navigation ; formulaire natif avec un champ e-mail et consentement séparé.
+2. Ajouter `src/server/newsletter.mjs`, `json-file.mjs`, les modèles JSON et les coordonnées dans `data/newsletter-settings.json` ; verrou, normalisation, doublons et expiration en mois calendaires.
+3. Mutualiser la lecture des formulaires et les états de chargement, puis adapter `src/styles/mobile.css` : texte plus grand, contrôles tactiles, aide aux champs et raccourcis vers les formulaires.
+4. Ajouter `scripts/newsletter-purge.mjs` et les tests de collecte / concurrence / expiration ; tester le serveur compilé et Chrome à 375 px avec données fictives isolées.
+5. Documenter le nettoyage manuel et les limites de l’envoi, mettre à jour les critères et le journal.
 
-- [ ] Utiliser le Prompt 3 pour demander des vérifications ciblées.
-- [ ] Tester le CTA : [COMPORTEMENT ATTENDU].
-- [ ] Tester une largeur mobile (via les outils du navigateur si possible).
-- [ ] Corriger un seul problème prioritaire : [PROBLÈME].
-- **Livrable :** un test documenté ; noter les limites.
+## Ajout de la vérification humaine newsletter
 
-## Étape 5 — Acquisition (5–10 min)
-
-- [ ] Rédiger une stratégie pour parler à 3 personnes précises.
-- [ ] Compléter `06_ACQUISITION.md`.
-- [ ] Préparer une courte démonstration de 60 secondes.
-- **Livrable :** une première hypothèse de marché testable.
-
-## Décisions prises pendant le cours
-
-| Décision | Pourquoi ? | Date |
-|---|---|---|
-| [EX. Nous gardons HTML/CSS/JS] | [RAISON] | [DATE] |
-
-## Plan B
-
-Si l'application Codex, internet ou le terminal ne fonctionne pas : continuer à rédiger les documents, puis présenter la maquette HTML déjà présente dans `src/`. Le résultat doit être présenté honnêtement.
+1. Ajouter `src/server/human-verification.mjs` : questions de calcul temporaires en mémoire, durée dix minutes, usage unique et association à un cookie technique ; aucune dépendance ou donnée persistante supplémentaire.
+2. Modifier `src/pages/newsletter.astro` et `src/styles/newsletter.css` : groupe « Vérification humaine », saisie numérique lisible sur mobile, validation serveur et nouveau calcul après erreur. Mentionner le cookie dans `/confidentialite`.
+3. Tester réponse correcte, absence, erreur, expiration, autre navigateur et rejeu, puis vérifier les inscriptions existantes et documenter les limites.

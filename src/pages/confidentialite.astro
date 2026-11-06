@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { newsletter } from '../server/newsletter.mjs';
+let config;
+try { config = await newsletter.settings(); }
+catch { Astro.response.status = 503; }
+---
+<BaseLayout title="Vos données et la newsletter — Mtech Paris" description="Les informations sur les données enregistrées pour la newsletter Mtech et les moyens de demander leur suppression.">
+  <article class="container prose-page privacy-page">
+    <a class="back-link" href="/newsletter">← Retour à la newsletter</a>
+    <p class="eyebrow">VOS DONNÉES</p>
+    <h1>Garder le lien,<br /><em>en toute clarté.</em></h1>
+    {config ? <>
+      <section><h2>Qui gère la newsletter ?</h2><p>{config.organizer}. Contact : <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>.</p></section>
+      <section><h2>Quelles informations sont enregistrées ?</h2><p>Votre adresse e-mail, un identifiant technique, la date d’inscription, la date d’expiration et la version du texte de consentement accepté. Le formulaire ne demande ni nom ni téléphone.</p></section>
+      <section><h2>Pour quel usage ?</h2><p>Vous inscrire aux actualités et invitations aux événements de {config.organizer}, avec votre consentement explicite. Participer à un événement ne vous abonne pas à la newsletter.</p><p>Cette version enregistre les abonnements sur le serveur du site. Aucun outil d’envoi n’est connecté et aucun e-mail de confirmation n’est envoyé. L’adresse n’est pas vérifiée par e-mail à ce stade.</p></section>
+      <section><h2>Pendant combien de temps ?</h2><p>Les abonnements expirent {config.retentionMonths} mois après l’inscription. Les adresses expirées sont retirées lors du nettoyage du fichier par l’organisateur ou à l’utilisation de la page newsletter. Vous pouvez demander une suppression plus tôt.</p></section>
+      <section><h2>Qui peut y accéder ?</h2><p>Les personnes de {config.organizer} autorisées à gérer le fichier d’abonnements. Ce fichier n’est pas accessible depuis les pages publiques du site.</p></section>
+      <section><h2>À quoi sert la vérification humaine ?</h2><p>Une petite question de calcul limite les inscriptions automatiques simples. Un cookie technique, valable dix minutes, associe la question au formulaire de votre navigateur. La réponse reste temporairement en mémoire sur le serveur, sert une seule fois et n’est pas enregistrée avec votre abonnement. Aucun service tiers de vérification n’est appelé.</p></section>
+      <section><h2>Comment retirer mon consentement ?</h2><p>Écrivez à <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a> pour demander une désinscription, une suppression, une correction ou une copie des informations associées à votre adresse.</p></section>
+      <section><h2>Et les inscriptions aux événements ?</h2><p>Les événements restent en démonstration. Utilisez uniquement les adresses fictives en @example.test sur leurs formulaires. Le fichier des événements est indépendant de la newsletter.</p></section>
+    </> : <p role="alert">Les informations de contact sont momentanément indisponibles. Merci de revenir plus tard.</p>}
+  </article>
+</BaseLayout>

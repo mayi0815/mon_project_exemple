@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import EventArt from '../components/EventArt.astro';
+import EventCard from '../components/EventCard.astro';
+import { store } from '../server/store.mjs';
+import { eventDate, eventTime } from '../lib/dates';
+
+const events = await store.events();
+const now = Date.now();
+const past = Astro.url.searchParams.get('vue') === 'passes';
+const query = (Astro.url.searchParams.get('q') || '').trim().slice(0, 100);
+const category = Astro.url.searchParams.get('categorie') || '';
+const categories = ['Codex & IA', 'SEO & GEO', 'Communauté'];
+const normalize = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const upcoming = events.filter(event => Date.parse(event.startsAt) > now);
+const featured = upcoming.find(event => event.featured) || upcoming[0];
+let filtered = events.filter(event => (Date.parse(event.startsAt) <= now) === past)
+  .filter(event => !category || event.category === category)
+  .filter(event => normalize(`${event.title} ${event.category} ${event.subtitle}`).includes(normalize(query)));
+if (past) filtered = filtered.reverse();
+function filterUrl(values: Record<string, string>) {
+  const params = new URLSearchParams({ ...(query ? { q: query } : {}), ...(category ? { categorie: category } : {}), ...(past ? { vue: 'passes' } : {}), ...values });
+  for (const [key, value] of params) if (!value) params.delete(key);
+  return `/?${params.toString()}#agenda`;
+}
+---
+<BaseLayout>
+  <section class="hero container" aria-labelledby="hero-title">
+    <div class="hero-copy"><p class="eyebrow"><span></span> LE RENDEZ-VOUS DES ESPRITS CURIEUX</p><h1 id="hero-title">Les idées se rencontrent.<br /><em>Les projets commencent.</em></h1><p class="hero-description">L’IA, le code, la visibilité. Et surtout, les gens.<br />Retrouvons-nous à Paris pour apprendre, créer et avancer ensemble.</p><div class="hero-actions"><a class="button primary" href="#agenda">Explorer les événements <Icon name="arrow" /></a><span class="hero-note">Ouvert aux débutants.<br />Et à toutes les bonnes idées.</span></div></div>
+    <div class="hero-visual" aria-hidden="true"><span class="hero-orbit orbit-one"></span><span class="hero-orbit orbit-two"></span><span class="floating-spark">✳</span><div class="hero-ticket"><div class="ticket-top"><span>ON SE RETROUVE ?</span><span>↗</span></div><div class="ticket-word">meet.<br /><em>make.</em><br />repeat.</div><div class="ticket-bottom"><span>48°51′ N<br />2°21′ E</span><span>PARIS, FR<br /><b>IRL & TOGETHER</b></span></div></div><span class="ticket-sticker">De bonnes idées,<br /><b>en bonne compagnie.</b></span><span class="tiny-spark">✧</span></div>
+  </section>
+
+  {featured && !past && !query && !category && <section class="container featured-section" aria-labelledby="featured-title"><div class="section-heading"><h2 id="featured-title"><span class="heading-spark" aria-hidden="true">✳</span> Le prochain rendez-vous</h2><span class="section-aside">À mettre dans votre agenda</span></div>
+    <article class="featured-card"><a class="featured-art" href={`/evenements/${featured.id}`} tabindex="-1" aria-hidden="true"><EventArt theme={featured.theme} art={featured.art} large /></a><div class="featured-content"><div class="featured-labels"><span class="pill purple">À LA UNE</span><span>{featured.format} · {featured.category}</span></div><h3><a href={`/evenements/${featured.id}`}>{featured.title}</a></h3><p class="featured-description">{featured.subtitle}</p><div class="featured-meta"><span><Icon name="calendar" /> <time datetime={featured.startsAt}>{eventDate(featured.startsAt)}</time> · {eventTime(featured.startsAt)}</span><span><Icon name="pin" /> {featured.location}</span></div><div class="featured-bottom"><span class="free-label"><span></span> Gratuit, sur inscription</span><a class="button primary" href={`/evenements/${featured.id}`}>Je découvre <Icon name="arrow" /></a></div></div></article>
+  </section>}
+
+  <section id="agenda" class="container agenda-section" aria-labelledby="agenda-title"><div class="section-heading agenda-heading"><div><p class="eyebrow">APPRENDRE. PARTAGER. SE RENCONTRER.</p><h2 id="agenda-title">Un peu de curiosité, <em>beaucoup de possibles.</em></h2></div><span class="count-label">{filtered.length} rendez-vous {past ? 'passé' : 'à venir'}{filtered.length > 1 && past ? 's' : ''}</span></div>
+    <div class="agenda-toolbar"><div class="view-tabs" aria-label="Période"><a href={filterUrl({ vue: '' })} aria-current={!past ? 'page' : undefined} class:list={{ active: !past }}>À venir <span>{upcoming.length}</span></a><a href={filterUrl({ vue: 'passes' })} aria-current={past ? 'page' : undefined} class:list={{ active: past }}>Événements passés</a></div><form class="search-form" method="get" action="/#agenda" role="search"><Icon name="search" size={17} /><label class="sr-only" for="search">Rechercher un événement</label><input id="search" type="search" name="q" value={query} placeholder="Trouver votre prochain déclic…" maxlength="100" />{past && <input type="hidden" name="vue" value="passes" />}{category && <input type="hidden" name="categorie" value={category} />}<button type="submit" aria-label="Lancer la recherche"><Icon name="chevron" size={16} /></button></form></div>
+    <nav class="category-filters" aria-label="Filtrer par thème"><a href={filterUrl({ categorie: '' })} class:list={{ selected: !category }} aria-current={!category ? 'true' : undefined}>Tous les événements</a>{categories.map(item => <a href={filterUrl({ categorie: item })} class:list={{ selected: category === item }} aria-current={category === item ? 'true' : undefined}>{item}</a>)}</nav>
+    {filtered.length ? <div class="events-grid">{filtered.map(event => <EventCard event={event} past={past} />)}</div> : <div class="empty-state"><span aria-hidden="true">⌕</span><h3>Aucun rendez-vous pour le moment.</h3><p>Essayez un autre mot-clé ou retrouvez tous les événements.</p><a class="button primary" href="/#agenda">Voir tous les événements <Icon name="arrow" /></a></div>}
+    <p class="programme-note"><span aria-hidden="true">◇</span> Programme d’exemple : les dates, formats et lieux restent à valider par Mtech Paris.</p>
+  </section>
+
+  <section class="container community-section" aria-labelledby="community-title"><div class="community-symbol" aria-hidden="true">✳</div><div><p class="eyebrow">L’ÉNERGIE DU COLLECTIF</p><h2 id="community-title">On avance mieux <em>ensemble.</em></h2><p>Que vous lanciez votre premier projet ou exploriez de nouveaux outils,<br class="desktop-break" /> il y a une place pour votre curiosité chez Mtech Paris.</p></div><a class="button light" href="/newsletter">Garder le contact <Icon name="arrow" /></a></section>
+</BaseLayout>

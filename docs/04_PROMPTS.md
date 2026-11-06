@@ -15,11 +15,13 @@
 
 ```text
 Lis docs/01_IDEE.md et docs/02_PRD.md.
-Je travaille sur [NOM DU PROJET] pour [PUBLIC CIBLE].
-Le problème principal est [PROBLÈME CONCRET].
+Je travaille sur MTECH EVENT ORGANISER pour mes clients potentiels.
+Le problème principal est d'avoir un outil qui va nous aider à manager les evenements crée par Mtech.
 
-Objectif de cette étape : [RÉSULTAT ATTENDU].
-Contraintes : [BUDGET, TEMPS, TECHNOLOGIES].
+Objectif de cette étape : 
+
+Contraintes : 
+
 
 Ne modifie pas encore le code. Identifie les informations manquantes,
 pose au maximum 3 questions importantes, puis propose un plan de 3 à 5

@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import FormFeedback from '../components/FormFeedback.astro';
+import { newsletter } from '../server/newsletter.mjs';
+import { RegistrationError } from '../server/store.mjs';
+import { readForm } from '../server/form.mjs';
+import { humanVerification, HUMAN_COOKIE, HUMAN_TTL_SECONDS } from '../server/human-verification.mjs';
+
+let email = '';
+let error = '';
+let success = false;
+let consent = false;
+let config;
+let humanError = false;
+try {
+  config = await newsletter.settings();
+  await newsletter.purgeExpired();
+} catch {
+  config = undefined;
+  error = 'Les inscriptions sont momentanément indisponibles. Merci de revenir un peu plus tard.';
+  Astro.response.status = 503;
+}
+if (Astro.request.method === 'POST' && config && !error) {
+  try {
+    const form = await readForm(Astro.request, Astro.url);
+    email = (form.get('email') || '').slice(0, 300);
+    consent = form.get('consent') === 'on';
+    try {
+      humanVerification.verify(form.get('humanId'), form.get('humanAnswer'), Astro.cookies.get(HUMAN_COOKIE)?.value);
+    } catch (caught) { humanError = true; throw caught; }
+    await newsletter.subscribe(email, form.get('consent'));
+    success = true;
+  } catch (caught) {
+    if (caught instanceof RegistrationError) { error = caught.message; Astro.response.status = caught.status; }
+    else { error = 'Votre demande n’a pas pu être enregistrée. Réessayez dans un instant.'; Astro.response.status = 503; }
+  }
+}
+const challenge = config && !success ? humanVerification.issue() : undefined;
+if (challenge) {
+  Astro.cookies.set(HUMAN_COOKIE, challenge.id, {
+    httpOnly: true, sameSite: 'strict', secure: Astro.url.protocol === 'https:',
+    path: '/newsletter', maxAge: HUMAN_TTL_SECONDS,
+  });
+} else {
+  Astro.cookies.delete(HUMAN_COOKIE, { path: '/newsletter' });
+}
+---
+<BaseLayout title="La newsletter — Mtech Paris" description="Inscrivez-vous aux actualités et invitations de Mtech. Une adresse e-mail suffit, sans compte.">
+  <div class="container newsletter-page">
+    <a class="back-link" href="/">← Retour aux événements</a>
+    <div class="newsletter-grid">
+      <section class="newsletter-intro" aria-labelledby="newsletter-title">
+        <p class="eyebrow">POUR GARDER LE LIEN</p>
+        <h1 id="newsletter-title">La suite commence<br /><em>par une rencontre.</em></h1>
+        <p class="intro-text">Les prochains rendez-vous, les ateliers et les idées à explorer avec Mtech. Gardons le contact, tout simplement.</p>
+        {!success && config && <a class="button primary mobile-form-link" href="#newsletter-inscription">Aller au formulaire ↓</a>}
+        <ul class="newsletter-benefits">
+          <li><Icon name="calendar" size={22} /><span>Les nouvelles rencontres à Paris</span></li>
+          <li><Icon name="people" size={22} /><span>Les ateliers et actualités de Mtech</span></li>
+          <li><Icon name="check" size={22} /><span>Un abonnement facultatif, indépendant des événements</span></li>
+        </ul>
+        <p class="newsletter-status">Les adresses sont enregistrées. L’envoi des newsletters n’est pas encore activé dans cette première version.</p>
+      </section>
+
+      <section id="newsletter-inscription" class="newsletter-panel registration-panel" aria-labelledby="subscribe-title">
+        {success ? (
+          <div class="registration-success" role="status" tabindex="-1" data-form-error>
+            <span class="success-icon"><Icon name="check" size={26} /></span>
+            <h2 id="subscribe-title">Votre demande est enregistrée.</h2>
+            <p>Merci de votre intérêt pour les actualités de Mtech.</p>
+            <p>Aucun e-mail de confirmation n’est envoyé pour le moment.</p>
+            <a class="button primary" href="/#agenda">Découvrir les rencontres <Icon name="arrow" /></a>
+          </div>
+        ) : (
+          <>
+            <p class="eyebrow">LA NEWSLETTER MTECH</p>
+            <h2 id="subscribe-title">On garde le contact ?</h2>
+            <p class="newsletter-form-intro">Votre e-mail suffit. Pas de compte à créer.</p>
+            {error && <p class="form-error" id="newsletter-error" role="alert" tabindex="-1" data-form-error>{error}</p>}
+            {config && (
+              <form method="post" class="registration-form" data-submit-form aria-describedby={error ? 'newsletter-error newsletter-email-help' : 'newsletter-email-help'}>
+                <label for="newsletter-email">Votre adresse e-mail</label>
+                <input id="newsletter-email" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next" required maxlength="254" placeholder="vous@exemple.fr" value={email} aria-describedby="newsletter-email-help" />
+                <p id="newsletter-email-help" class="field-help">Utilisée uniquement pour les actualités et invitations de {config.organizer}.</p>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="consent" required checked={consent} />
+                  <span>J’accepte de recevoir les actualités et invitations de {config.organizer} par e-mail. Je peux retirer mon consentement à tout moment.</span>
+                </label>
+                {challenge && <fieldset class="human-verification">
+                  <legend>Vérification humaine</legend>
+                  <p id="human-help">Répondez à ce petit calcul pour limiter les inscriptions automatiques. La question est valable dix minutes.</p>
+                  <label for="human-answer">{challenge.question}</label>
+                  <input type="hidden" name="humanId" value={challenge.id} />
+                  <input id="human-answer" name="humanAnswer" type="text" inputmode="numeric" autocomplete="off" pattern="[0-9]{1,2}" maxlength="2" required placeholder="Votre réponse" aria-describedby={humanError ? 'human-help newsletter-error' : 'human-help'} aria-invalid={humanError ? 'true' : undefined} />
+                </fieldset>}
+                <button class="button primary" type="submit"><span data-button-label>M’inscrire à la newsletter</span><Icon name="arrow" /></button>
+                <p class="newsletter-privacy-note">Conservation : {config.retentionMonths} mois. Pour demander votre suppression : <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>.</p>
+                <a class="privacy-link" href="/confidentialite">Comment mes données sont-elles utilisées ? <Icon name="arrow" size={16} /></a>
+              </form>
+            )}
+          </>
+        )}
+      </section>
+    </div>
+  </div>
+  <FormFeedback />
+</BaseLayout>

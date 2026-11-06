@@ -13,3 +13,6 @@ Objectif : améliorer mon projet existant sans casser les fonctionnalités actue
 
 
 Contraintes : ne supprime aucune fonctionnalité existante, ne modifie pas de secrets ou de données de production, et demande mon accord avant toute modification importante.
+
+
+

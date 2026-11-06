@@ -1,67 +1,60 @@
-# 02 — PRD : PRODUCT REQUIREMENTS DOCUMENT
+# 02 — PRD : Mtech Paris Events, V1
 
-**PRD = document d'exigences produit.** Remplacez tous les `[éléments à compléter]`. Ce document sera la référence principale de Codex.
+Périmètre dérivé de `01_IDEE.md` et de la demande du 6 novembre 2026. Les hypothèses restent à confirmer par l’étudiant avant une utilisation réelle.
 
-## 1. Identité du projet
+## Identité et objectif
 
-- **Nom :** [NOM]
-- **Concept en une phrase :** [DESCRIPTION]
-- **Public cible :** [CIBLE]
-- **Problème à résoudre :** [PROBLÈME]
-- **Objectif du MVP :** [OBJECTIF TESTABLE]
+- **Produit :** site d’événements Mtech Paris, inspiré du parcours simple de Luma.
+- **Public :** personnes intéressées par Codex, les outils d’IA, le SEO et le GEO ; clients potentiels et communauté Mtech Paris.
+- **Besoin :** présenter ses rencontres et gérer des inscriptions sans paiement ni base de données complexe.
+- **Objectif vérifiable :** trouver un événement et enregistrer une inscription fictive persistante dans un second JSON.
 
-## 2. Parcours de l'utilisateur
+## Fonctionnalités initiales et ajout demandé
 
-**Quand** [SITUATION], **l'utilisateur veut** [ACTION], **pour** [BÉNÉFICE].
+| Priorité | Fonction | Critère d’acceptation |
+|---|---|---|
+| P0 | Catalogue issu de `data/events.json` | Événements triés ; recherche, filtres et archives fonctionnent par URL, sans JavaScript. Une modification du JSON est visible au prochain chargement. |
+| P0 | Détail d’un événement | Une adresse dédiée affiche description, programme, horaire Paris, lieu à confirmer et capacité. Un identifiant inconnu renvoie 404. |
+| P0 | Inscription de démonstration | Un formulaire valide écrit dans `data/registrations.json`. Les erreurs sont affichées ; doublons, événements commencés et dépassements de capacité sont refusés côté serveur, y compris en concurrence. |
+| P1 | Newsletter (ajout explicitement demandé) | `/newsletter` accepte une adresse e-mail avec consentement séparé et écrit dans `data/newsletter.json`. Doublons et saisies invalides gérés. Notice de confidentialité, coordonnées et expiration de 12 mois. Aucun envoi d’e-mail. |
 
-Décrivez le parcours idéal en 3 actions :
-1. [ARRIVÉE / DÉCOUVERTE]
-2. [INTERACTION PRINCIPALE]
-3. [RÉSULTAT OBTENU]
+**Ajout demandé : vérification humaine newsletter.** Une petite addition obligatoire, sans service tiers, est vérifiée côté serveur avant tout abonnement. Question valable dix minutes, liée au navigateur et utilisable une seule fois ; réponse absente, fausse, expirée ou rejouée refusée. Les erreurs conservent l’e-mail et le consentement et proposent une nouvelle question. Il s’agit d’une protection légère, pas d’une garantie de blocage des robots évolués.
 
-## 3. Fonctionnalités prioritaires (maximum trois)
+## Parcours
 
-| Priorité | Fonctionnalité | Pourquoi ? | Critère d'acceptation |
-|---|---|---|---|
-| P0 | [FONCTION 1] | [BESOIN] | [COMPORTEMENT VÉRIFIABLE] |
-| P0 | [FONCTION 2] | [BESOIN] | [COMPORTEMENT VÉRIFIABLE] |
-| P1 | [FONCTION 3] | [BESOIN] | [COMPORTEMENT VÉRIFIABLE] |
+1. Découvrir les rencontres, choisir un thème ou rechercher un mot.
+2. Ouvrir une fiche et consulter les informations pratiques.
+3. Saisir un pseudo fictif et une adresse `@example.test`, confirmer le mode démonstration et obtenir une confirmation d’écriture.
 
-**Exemple de critère :** « Quand je clique sur *Découvrir*, la page défile jusqu'à la section *Fonctionnement*. » Évitez « le site est beau » comme seul critère.
+## Contraintes et décisions
 
-## 4. Structure de l'interface (si site ou application)
+- Astro explicitement demandé ; adaptateur Node pour le disque. Aucun React ni base de données.
+- Français, HTML rendu côté serveur ; CSS responsive et petit script facultatif de chargement / focus.
+- Serveur local sur `127.0.0.1` ; aucun service externe ou déploiement.
+- Événements fictifs clairement annoncés ; aucune statistique inventée de participation.
+- Gestion organisateur par édition directe du JSON ; pas d’administration publique.
+- Événements en démonstration : les vraies adresses y sont refusées. Newsletter : collecte d’adresses usuelles explicitement autorisée ; responsable `Mtech`, contact `contact@mtecparis.com`, conservation `12` mois, selon les réponses de l’étudiant.
+- Sur mobile jusqu’à 800 px : champs de 56 px, texte de saisie de 16 px, boutons principaux de 52 px minimum, consentement facile à sélectionner et accès direct au formulaire.
+- Fichiers privés hors de `public/`, inscriptions ignorées par Git, pas de cache partagé des formulaires.
 
-- **Titre principal :** [MESSAGE CLÉ]
-- **Call-to-action (CTA) :** [LIBELLÉ ET ACTION ATTENDUE]
-- **Sections à afficher :** [LISTE COURTE]
-- **Ton éditorial :** [EX. SIMPLE, RASSURANT, PROFESSIONNEL]
-- **Style visuel :** [PALETTE, TYPOGRAPHIE, RÉFÉRENCES]
+## Hors périmètre
 
-## 5. Contraintes
+Paiements, comptes, envoi d’e-mails, annulations d’événements, analytique, publication et multi-serveur. La collecte personnelle réelle reste hors périmètre des événements ; elle est ajoutée uniquement pour la newsletter.
 
-- **Budget maximal du prototype :** 0 € par défaut.
-- **Technologies :** HTML/CSS/JavaScript par défaut ; autre choix justifié : [CHOIX].
-- **Support :** ordinateur et mobile.
-- **Langue :** français par défaut ; [AUTRE LANGUE SI UTILE].
-- **Données utilisateurs :** aucune collecte réelle par défaut.
-- **Accessibilité :** textes lisibles, boutons identifiables, navigation clavier de base.
+## Définition de terminé
 
-## 6. Hors périmètre (à ne PAS développer pendant le cours)
+- Analyse Astro / TypeScript sans erreur ; build Node réussi.
+- Tests de validation, persistance, doublons et capacité concurrente réussis.
+- Tests HTTP du serveur compilé : catalogue, filtres, recherche, formulaire et erreurs.
+- Mode démonstration explicite et journal factuel à jour.
+- Rendu visuel et clavier à vérifier manuellement si le navigateur automatisé est indisponible.
 
-- [FONCTION AMBITIEUSE 1]
-- [FONCTION AMBITIEUSE 2]
+## Hypothèses à confirmer
 
-## 7. Définition de « terminé »
+1. Les événements, horaires, lieux, couleurs et textes d’exemple seront remplacés ou validés par Mtech Paris.
+2. L’édition manuelle du JSON suffit pour l’organisateur dans cette version.
+3. La mise en ligne et les inscriptions réelles seront une étape distincte autorisée.
 
-- [ ] Les trois fonctions prioritaires (ou moins) respectent leurs critères.
-- [ ] Le prototype peut être montré à quelqu'un d'autre.
-- [ ] Le CTA principal fonctionne (ou est explicitement une simulation).
-- [ ] La mise en page reste utilisable sur mobile.
-- [ ] Au moins un test a été effectué et noté dans `05_WORKLOG.md`.
+## Entretien de la newsletter
 
-## 8. Questions ouvertes
-
-1. [QUESTION / DÉCISION À PRENDRE]
-2. [QUESTION / DÉCISION À PRENDRE]
-
-> **Ne demandez pas à Codex de construire tout le produit avant d'avoir rempli les sections 1, 3, 5 et 7.**
+Le consentement conserve une date et une version. L’expiration est calculée en mois calendaires. Le nettoyage s’exécute lors de l’utilisation de la page et via `npm run newsletter:purge`. Sans trafic ni entretien, les données expirées restent sur disque : une exécution quotidienne sera nécessaire en exploitation, ainsi qu’une gestion des suppressions demandées à l’adresse de contact. Aucun envoi, double opt-in ou tâche planifiée n’est ajouté.

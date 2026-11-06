@@ -1,0 +1,16 @@
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-submit-form]').forEach(form => {
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const label = form.querySelector('[data-button-label]');
+    const originalLabel = label?.textContent;
+    form.addEventListener('submit', () => {
+      if (button) { button.disabled = true; button.setAttribute('aria-busy', 'true'); }
+      if (label) label.textContent = 'Enregistrement…';
+    });
+    window.addEventListener('pageshow', () => {
+      if (button) { button.disabled = false; button.removeAttribute('aria-busy'); }
+      if (label && originalLabel) label.textContent = originalLabel;
+    });
+  });
+  document.querySelector<HTMLElement>('[data-form-error]')?.focus();
+</script>

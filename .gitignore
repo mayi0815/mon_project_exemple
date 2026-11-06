@@ -21,3 +21,10 @@ build/
 
 # Journaux
 *.log
+
+# Astro et inscriptions locales (le modèle vide reste versionné)
+.astro/
+data/registrations.json
+data/newsletter.json
+data/*.lock
+data/*.tmp

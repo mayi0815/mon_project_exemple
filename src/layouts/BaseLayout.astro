@@ -1,0 +1,25 @@
+---
+import Icon from '../components/Icon.astro';
+import '../styles/global.css';
+import '../styles/newsletter.css';
+import '../styles/mobile.css';
+interface Props { title?: string; description?: string; }
+const { title = 'Mtech Paris — Les idées se rencontrent.', description = 'Les rencontres Mtech Paris autour de Codex, de l’intelligence artificielle et du SEO / GEO. Découvrez les événements et testez une inscription gratuite.' } = Astro.props;
+const about = Astro.url.pathname === '/a-propos';
+const newsletterPage = ['/newsletter', '/confidentialite'].includes(Astro.url.pathname);
+const eventsPage = Astro.url.pathname === '/' || Astro.url.pathname.startsWith('/evenements/');
+---
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content={description} /><meta name="robots" content="noindex, nofollow" /><meta name="theme-color" content="#f8f7f4" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" /><title>{title}</title></head>
+  <body>
+    <a href="#contenu" class="skip-link">Aller au contenu</a>
+    <header class="site-header"><div class="container header-inner">
+      <a class="brand" href="/" aria-label="Mtech Paris, accueil"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>mtech<span class="brand-city">paris</span></span></a>
+      <nav aria-label="Navigation principale"><a href="/#agenda" class:list={{ 'nav-active': eventsPage }} aria-current={eventsPage ? 'page' : undefined}>Événements</a><a href="/newsletter" class:list={{ 'nav-active': newsletterPage }} aria-current={newsletterPage ? 'page' : undefined}>Newsletter</a><a href="/a-propos" class:list={{ 'nav-active': about }} aria-current={about ? 'page' : undefined}>À propos</a></nav>
+      <a class="header-location" href="/a-propos"><span class="live-dot"></span> Une communauté à Paris <Icon name="arrow" size={15} /></a>
+    </div></header>
+    <main id="contenu"><slot /></main>
+    <footer class="site-footer"><div class="container footer-inner"><a class="brand footer-brand" href="/">mtech<span class="brand-city">paris</span></a><p>De la curiosité. Des rencontres. Des projets.</p><span>© {new Date().getFullYear()} Mtech Paris</span></div><div class="container footer-links"><a href="/newsletter">La newsletter</a><a href="/confidentialite">Vos données</a></div><div class="container demo-footer">Événements de démonstration · Newsletter : enregistrement des abonnements, sans envoi d’e-mail pour le moment.</div></footer>
+  </body>
+</html>

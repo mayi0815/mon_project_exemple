@@ -1,0 +1,112 @@
+/* Les tailles tactiles et les textes priment sur la densité sur téléphone. */
+@media (max-width: 800px) {
+  body { font-size: 16px; }
+  .hero-description,
+  .featured-description,
+  .intro-text,
+  .detail-section > p,
+  .prose-grid p,
+  .demo-callout p,
+  .empty-state p { font-size: 16px; line-height: 1.75; }
+
+  .button,
+  .hero-actions .button,
+  .featured-bottom .button,
+  .community-section .button {
+    min-height: 52px;
+    padding: 14px 18px;
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: normal;
+  }
+
+  .hero-actions { flex-wrap: wrap; }
+  .hero-note { display: none; }
+  .featured-bottom { flex-wrap: wrap; gap: 16px; }
+  .featured-meta > span { flex-wrap: wrap; row-gap: 4px; }
+  .featured-meta,
+  .featured-labels,
+  .free-label,
+  .card-bottom .free-label,
+  .card-category,
+  .small-label,
+  .card-meta,
+  .card-cta { font-size: 14px; }
+  .card-body h3 { font-size: 23px; }
+  .card-body { padding: 22px; }
+  .card-category { flex-wrap: wrap; }
+  .card-meta { gap: 7px; line-height: 1.7; }
+  .card-cta { min-height: 44px; padding: 8px 0 8px 10px; }
+  .card-bottom { flex-wrap: wrap; }
+
+  .category-filters { gap: 10px; }
+  .category-filters a { min-height: 44px; display: inline-flex; align-items: center; font-size: 14px; padding: 10px 12px; }
+  .view-tabs { gap: 20px; }
+  .view-tabs a { min-height: 48px; font-size: 14px; }
+  .view-tabs a > span { font-size: 12px; }
+  .search-form { min-height: 56px; padding: 5px 8px 5px 14px; }
+  .search-form input { font-size: 16px; min-height: 44px; }
+  .search-form button { min-width: 44px; min-height: 44px; }
+  .back-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; margin-bottom: 18px; }
+
+  .registration-panel { min-width: 0; padding: 26px 22px; }
+  .registration-heading h2 { font-size: 27px; line-height: 1.25; }
+  .registration-form > label:not(.checkbox-label) { font-size: 16px; margin-bottom: 9px; }
+  .registration-form > input { min-height: 56px; padding: 14px; font-size: 16px; border-radius: 8px; margin-bottom: 20px; }
+  .registration-form > input::placeholder { color: #807587; }
+  .registration-form .button { min-height: 56px; font-size: 16px; }
+  .checkbox-label { gap: 12px; padding-block: 10px; font-size: 15px; line-height: 1.65; margin-block: 0 18px; min-height: 44px; }
+  .checkbox-label input { width: 24px; height: 24px; margin-top: 1px; }
+  .form-note,
+  .submit-note,
+  .field-help,
+  .form-error,
+  .newsletter-privacy-note,
+  .privacy-link,
+  .panel-footer,
+  .registration-success p { font-size: 14px; line-height: 1.7; }
+  .form-error { padding: 15px; }
+  .newsletter-privacy-note { overflow-wrap: anywhere; }
+  .detail-info strong { font-size: 16px; }
+  .detail-info > div > span > span { font-size: 14px; line-height: 1.6; }
+  .organizer small { font-size: 10px; }
+  .organizer strong { font-size: 16px; }
+  .schedule li { font-size: 16px; line-height: 1.7; }
+  .detail-section h2 { font-size: 25px; }
+  .mobile-form-link { display: flex; width: 100%; margin-block: 24px; }
+  .detail-main > .event-art { height: 220px; }
+  .detail-main > .event-art .code-mark { top: 30px; }
+  .programme-note { font-size: 13px; line-height: 1.7; }
+  .community-section p:last-child { font-size: 15px; }
+  .footer-links a { min-height: 44px; display: inline-flex; align-items: center; font-size: 15px; }
+  .footer-inner > span,
+  .demo-footer { font-size: 12px; }
+  .eyebrow,
+  .hero .eyebrow,
+  .agenda-heading .eyebrow,
+  .community-section .eyebrow { font-size: 11px; line-height: 1.6; letter-spacing: 1px; }
+}
+
+@media (max-width: 580px) {
+  .container { width: calc(100% - 32px); }
+  .header-inner { display: grid; grid-template-columns: 1fr; height: auto; min-height: 116px; gap: 12px; padding-block: 16px 4px; }
+  .site-header nav { width: 100%; justify-content: space-between; gap: 12px; font-size: 15px; align-self: auto; }
+  .site-header nav a { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 10px 3px; }
+  .nav-active::after { bottom: 0; }
+  .hero { padding-block: 30px; }
+  .hero h1 { font-size: clamp(29px, 7.5vw, 40px); line-height: 1.18; }
+  .hero-visual { display: none; }
+  .hero-actions .button { width: 100%; justify-content: space-between; }
+  .featured-content { padding: 24px 16px 20px; }
+  .featured-content h3 { font-size: 29px; }
+  .featured-bottom .button { width: 100%; justify-content: space-between; }
+  .featured-art .event-art { height: 200px; }
+  .featured-labels { gap: 9px; flex-wrap: wrap; }
+  .community-section .button { margin-left: 0; width: 100%; justify-content: space-between; }
+  .community-section { align-items: flex-start; padding: 24px 20px; }
+  .community-symbol { font-size: 40px; }
+  .detail-main h1 { font-size: 36px; }
+  .newsletter-intro h1 { font-size: 36px; }
+  .footer-inner { flex-wrap: wrap; row-gap: 16px; }
+  .newsletter-panel { padding: 26px 20px; }
+}
